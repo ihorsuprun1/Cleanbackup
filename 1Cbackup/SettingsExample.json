@@ -1,0 +1,14 @@
+{
+  "CompanyName": "Unknow",
+  "TypeCopy": "File",
+  "TelegramIsNeed": true,
+  "CleanBackupIsNeed": true,
+  "TelegramChtid": null,
+  "TelegramToken": null,
+  "PathSearchDirectory": "D:\\backup\\",
+  "OutPutDirectory": "D:\\backups\\1.Dayly\\",
+  "PathDAY": "D:\\backups\\1.Dayly",
+  "PathWEEK": "D:\\backups\\2.Weekly",
+  "PathMOUNT": "D:\\backups\\3.Monthly",
+  "PathYears": "D:\\backups\\4.Years"
+}

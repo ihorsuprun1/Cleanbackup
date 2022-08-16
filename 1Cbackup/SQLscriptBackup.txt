@@ -1,0 +1,93 @@
+Скрипт бекапа баз данных олком :
+##########################################################################################################################################
+DECLARE @xop_basesList Table (xop_arr_baseName varchar(200) primary key)
+INSERT INTO @xop_basesList(xop_arr_baseName)
+-- список баз для бекапа ЗАДАТЬ ЗДЕСЬ!!!! ********************
+VALUES ('olkomdoc'),('upp290616')
+-- каталог для бекапов ***************************************
+DECLARE @xop_backupDir varchar (200) = 'D:\backup\1.Dayly\'
+-- имя БД для бекапа
+DECLARE @xop_databaseName varchar(200)
+-- текущая дата
+DECLARE @xop_currDate varchar(200)
+-- имя файла (дата + имя БД + расширение)
+DECLARE @xop_fileName varchar(200)
+-- полный путь к файлу бекапа
+DECLARE @xop_fileNameFullPath varchar(200)
+-- строка с сформированным запросом
+DECLARE @xop_exec as varchar(MAX)
+
+
+DECLARE xop_cursor CURSOR
+FOR SELECT * FROM @xop_basesList
+OPEN xop_cursor
+FETCH NEXT FROM xop_cursor into @xop_databaseName
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+--PRINT '---'
+--
+--SELECT @xop_currDate = (SELECT convert(varchar(500),GetDate(),112))
+SELECT @xop_currDate = (SELECT SUBSTRING(REPLACE(CONVERT(varchar, GETDATE(), 111), '/','') + REPLACE(CONVERT(varchar, GETDATE(), 108), ':',''),0,13) AS 'My Formatted Date')
+SET @xop_fileName = @xop_databaseName +'--'+ @xop_currDate +'.bak'
+SET @xop_fileNameFullPath = @xop_backupDir+@xop_fileName
+--PRINT @xop_fileNameFullPath
+SET @xop_exec = 'BACKUP DATABASE [' + @xop_databaseName + '] TO DISK = N''' + @xop_fileNameFullPath + ''' with COMPRESSION'
+--print @xop_exec
+--
+EXEC(@xop_exec)
+FETCH NEXT FROM xop_cursor into @xop_databaseName
+END
+CLOSE xop_cursor;
+DEALLOCATE xop_cursor;
+##########################################################################################################################################
+
+Скрипт Бекапа логов Олком
+##########################################################################################################################################
+
+DECLARE @xop_basesList Table (xop_arr_baseName varchar(200) primary key)
+INSERT INTO @xop_basesList(xop_arr_baseName)
+-- список баз для бекапа ЗАДАТЬ ЗДЕСЬ!!!! ********************
+VALUES ('olkomdoc'), ('upp290616')
+
+-- каталог для бекапов ***************************************
+DECLARE @xop_backupDir varchar (200) = 'D:\backup\log\'
+
+
+DECLARE @xop_fileExt varchar (200) = '.trn'
+-- имя БД для бекапа
+DECLARE @xop_databaseName varchar(200)
+-- текущая дата
+DECLARE @xop_currDate varchar(200)
+-- имя файла (дата + имя БД + расширение)
+DECLARE @xop_fileName varchar(200)
+-- полный путь к файлу бекапа
+DECLARE @xop_fileNameFullPath varchar(200)
+-- строка с сформированным запросом
+DECLARE @xop_exec as varchar(MAX)
+
+
+DECLARE xop_cursor CURSOR
+FOR SELECT * FROM @xop_basesList
+OPEN xop_cursor
+FETCH NEXT FROM xop_cursor into @xop_databaseName
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+--PRINT '---'
+--
+--SELECT @xop_currDate = (SELECT convert(varchar(500),GetDate(),112))
+SELECT @xop_currDate = (SELECT SUBSTRING(REPLACE(CONVERT(varchar, GETDATE(), 111), '/','') + REPLACE(CONVERT(varchar, GETDATE(), 108), ':',''),0,13) AS 'My Formatted Date')
+SET @xop_fileName = @xop_databaseName +'--'+ @xop_currDate + @xop_fileExt
+SET @xop_fileNameFullPath = @xop_backupDir+@xop_fileName
+--PRINT @xop_fileNameFullPath
+SET @xop_exec = 'BACKUP LOG [' + @xop_databaseName + '] TO DISK = N''' + @xop_fileNameFullPath + ''' WITH NOFORMAT, NOINIT, SKIP, NOREWIND, NOUNLOAD, COMPRESSION,  STATS = 10'
+-- BACKUP LOG [MODA] TO  DISK = N'E:\backup\m01.trn' WITH NOFORMAT, NOINIT, SKIP, NOREWIND, NOUNLOAD, COMPRESSION,  STATS = 10
+--print @xop_exec
+--
+EXEC(@xop_exec)
+FETCH NEXT FROM xop_cursor into @xop_databaseName
+END
+CLOSE xop_cursor;
+DEALLOCATE xop_cursor;
+##########################################################################################################################################
